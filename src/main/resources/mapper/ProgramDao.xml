@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ainijar.dao.ProgramDao">
+
+	<sql id="BASE_JOINS">
+		left join dept d on d.id = a.dept_id
+	</sql>
+
+	<select id="findPage" resultType="com.ainijar.entity.Program" >
+		SELECT a.*, d.name AS deptName
+		FROM program a
+		<include refid="BASE_JOINS"/>
+		${ew.customSqlSegment}
+	</select>
+</mapper>

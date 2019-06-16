@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>可编辑表格</title>
+    <link rel="stylesheet" href="${request.contextPath}/statics/css/bootstrap.css">
+    <style media="screen">
+      .table{
+        text-align: center;
+      }
+
+    </style>
+</head>
+<body>
+  <table class="table table-bordered table-hover">
+    <tr class="info">
+      <td>名称</td>
+      <td>评委1</td>
+      <td>评委2</td>
+      <td>评委3</td>
+      <td>操作</td>
+    </tr>
+    <tr>
+      <td colspan="5" class="danger"><button class="btn btn-primary btn-sm">增加</button></td>
+    </tr>
+  </table>
+<script src="${request.contextPath}/statics/libs/jquery.min.js"></script>
+<script src="${request.contextPath}/statics/js/table.js"></script>
+</body>
+</html>

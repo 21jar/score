@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="${request.contextPath}/statics/libs/jquery.min.js"></script>
+</head>
+<body>
+<div class="main">
+    <h2>socketTest</h2>
+    <input type="button" id="send" value="点击向服务器发送消息">
+    <p id="recive"></p>
+
+</div>
+</body>
+
+<script type="text/javascript">
+    var ws = null;
+    var ws_status = false;
+    function openWebSocket(){
+        //判断当前浏览器是否支持WebSocket
+        if ('WebSocket' in window) {
+            ws = new WebSocket("ws://"+window.location.host+"/websocket/11");
+        } else if ('MozWebSocket' in window) {
+            websocket = new MozWebSocket("ws://"+window.location.host+"/websocket/11");
+        } else {
+            ws = new SockJS("http://"+window.location.host+"/websocket/11");
+        }
+        ws.onopen = function () {
+
+        };
+        //这个事件是接受后端传过来的数据
+        ws.onmessage = function (event) {
+            //根据业务逻辑解析数据
+            console.log("Server:");
+            console.log(event);
+        };
+        ws.onclose = function (event) {
+            console.log("Connection closed!");
+        };
+        ws.onopen = function (event){
+            ws_status = true;
+            console.log("Connected!");
+        };
+        ws.onerror = function (event){
+            console.log("Connect error!");
+        };
+    }
+    //如果连接失败，每隔两秒尝试重新连接
+    setInterval(function(){
+        if(!ws_status){
+            openWebSocket();
+        }
+    }, 2000);
+    $("#send").click(function(){
+        ws.send("Hello, server, I am browser.");
+    });
+</script>
+</html>

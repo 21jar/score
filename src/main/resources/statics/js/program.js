@@ -42,7 +42,8 @@ var vm = new Vue({
         },
 		showList: true,
 		title: null,
-		program: {}
+		program: {},
+		judgesList: []
 	},
 	methods: {
 		query: function () {
@@ -60,7 +61,6 @@ var vm = new Vue({
 			}
 			vm.showList = false;
             vm.title = "修改";
-            
             vm.getInfo(id)
 		},
 		saveOrUpdate: function (event) {
@@ -108,7 +108,19 @@ var vm = new Vue({
 		getInfo: function(id){
 			$.get(baseURL + "program/info/"+id, function(r){
                 vm.program = r.program;
-            });
+                vm.judgesList = r.judgesList;
+				// 动态生成评委
+				for(var i=0; i<vm.judgesList.length; i++) {
+					var judges = vm.judgesList[i];
+					var htmlStr="<div class=\"form-group\">\n" +
+						"    <div class=\"col-sm-2 control-label\">" + judges.name + "</div>\n" +
+						"    <div class=\"col-sm-10\">\n" +
+						"        <input type=\"text\" class=\"form-control\" v-model=\"program.grade1\" onblur='grade("+judges.id+")'/>\n" +
+						"    </div>\n" +
+						"</div>"
+					$("#score").after(htmlStr);
+				}
+			});
 		},
 		reload: function (event) {
 			vm.showList = true;
@@ -127,9 +139,10 @@ var vm = new Vue({
                 data: JSON.stringify(vm.program),
                 success: function(r){
                     if(r.code === 0){
-                        alert('操作成功', function(index){
-                            // vm.reload();
-                        });
+                        // alert('操作成功', function(index){
+                        //     vm.reload();
+                        // });
+						$("#message").text("操作成功")
                     }else{
                         alert(r.msg);
                     }
@@ -138,3 +151,23 @@ var vm = new Vue({
 		}
 	}
 });
+
+function grade(id) {
+	var url = "program/grade";
+	$.ajax({
+		type: "POST",
+		url: baseURL + url,
+		contentType: "application/json",
+		data: JSON.stringify(vm.program),
+		success: function(r){
+			if(r.code === 0){
+				// alert('操作成功', function(index){
+				// 	vm.reload();
+				// });
+				$("#message").text("操作成功")
+			}else{
+				alert(r.msg);
+			}
+		}
+	});
+}

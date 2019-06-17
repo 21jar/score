@@ -2,14 +2,18 @@ package com.ainijar.controller;
 
 import com.ainijar.common.utils.PageUtils;
 import com.ainijar.common.utils.Result;
+import com.ainijar.entity.Judges;
 import com.ainijar.entity.Program;
+import com.ainijar.service.IJudgesService;
 import com.ainijar.service.IProgramService;
 import com.ainijar.service.WebSocketServer;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -21,7 +25,7 @@ public class ProgramController {
     private IProgramService iProgramService;
 
     @Autowired
-    private WebSocketServer webSocketServer;
+    private IJudgesService iJudgesService;
     /**
      * 列表
      */
@@ -37,7 +41,8 @@ public class ProgramController {
     @RequestMapping("/info/{id}")
     public Result info(@PathVariable("id") Long id){
         Program program = iProgramService.getById(id);
-        return Result.ok().put("program", program);
+        List<Judges> judgesList = iJudgesService.list( new QueryWrapper<Judges>().orderByDesc("order_num"));
+        return Result.ok().put("program", program).put("judgesList", judgesList);
     }
 
     /**

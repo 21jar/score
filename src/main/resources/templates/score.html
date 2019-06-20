@@ -9,39 +9,45 @@
         body, html {
             margin-top: 200px;
         }
+
         .judges {
-            width: 20%;    /*这里是百分比或者像素值，对应下面的center就是百分比或者像素值*/
+            width: 16%; /*这里是百分比或者像素值，对应下面的center就是百分比或者像素值*/
             height: 200px;
             float: left;
-            text-align:center;
+            text-align: center;
         }
     </style>
 </head>
-<body >
+<body>
 <img src="/statics/images/beijing.jpg" width="100%" height="100%" style="z-index:-100;position:absolute;left:0;top:0">
-<div class="main" >
+<div class="main">
+    <div>
+        <span id="programName"></span>
+    </div>
 
     <div id="middle">
-        <div class="judges">
-            评委1<br>
-            <span id="grade1"></span>
-        </div>
-        <div class="judges">
-            评委2<br>
-            <span id="grade2"></span>
-        </div>
-        <div class="judges">
-            评委3<br>
-            <span id="grade3"></span>
-        </div>
-        <div class="judges">
-            评委4<br>
-            <span id="grade4"></span>
-        </div>
-        <div class="judges">
-            评委5<br>
-            <span id="grade5"></span>
-        </div>
+        <div id="judges"></div>
+        <!--<div class="judges">-->
+            <!--<img id="judgesImg" src="/statics/images/边松风.jpg"><br>-->
+            <!--<span id="judgesName"></span><br>-->
+            <!--<span id="grade1"></span><br>-->
+        <!--</div>-->
+        <!--<div class="judges">-->
+            <!--评委2<br>-->
+            <!--<span id="grade2"></span>-->
+        <!--</div>-->
+        <!--<div class="judges">-->
+            <!--评委3<br>-->
+            <!--<span id="grade3"></span>-->
+        <!--</div>-->
+        <!--<div class="judges">-->
+            <!--评委4<br>-->
+            <!--<span id="grade4"></span>-->
+        <!--</div>-->
+        <!--<div class="judges">-->
+            <!--评委5<br>-->
+            <!--<span id="grade5"></span>-->
+        <!--</div>-->
     </div>
 
 </div>
@@ -50,14 +56,15 @@
 <script type="text/javascript">
     var ws = null;
     var ws_status = false;
-    function openWebSocket(){
+
+    function openWebSocket() {
         //判断当前浏览器是否支持WebSocket
         if ('WebSocket' in window) {
-            ws = new WebSocket("ws://"+window.location.host+"/websocket/11");
+            ws = new WebSocket("ws://" + window.location.host + "/websocket/11");
         } else if ('MozWebSocket' in window) {
-            websocket = new MozWebSocket("ws://"+window.location.host+"/websocket/11");
+            websocket = new MozWebSocket("ws://" + window.location.host + "/websocket/11");
         } else {
-            ws = new SockJS("http://"+window.location.host+"/websocket/11");
+            ws = new SockJS("http://" + window.location.host + "/websocket/11");
         }
         ws.onopen = function () {
 
@@ -68,31 +75,47 @@
             console.log("Server:");
             console.log(event);
             var parsedJson = jQuery.parseJSON(event.data);
-            $("#grade1").text(parsedJson.grade1);
-            $("#grade2").text(parsedJson.grade2);
-            $("#grade3").text(parsedJson.grade3);
-            $("#grade4").text(parsedJson.grade4);
-            $("#grade5").text(parsedJson.grade5);
+            // 根据指令处理任务
+            if ("init" == parsedJson.cmd) {
+                $("#judges").text(parsedJson.program.name);
+                $("#judges").nextAll().remove();
+                for (var i = 0; i < parsedJson.judgesList.length; i++) {
+                    var judges = parsedJson.judgesList[i];
+                    var judgesScore = "undefined" == typeof(judges.judgesScore) ? "": judges.judgesScore;
+                    var judgesHtml = "<div class=\"judges\">\n" +
+                        "            <img id='judgesImg" + judges.id + "' width=\"40%\" height=\"60%\" src=\"/statics/images/" + judges.name + ".jpg\"><br>\n" +
+                        "            <span id='judgesName" + judges.id + "'>" + judges.name + "</span><br>\n" +
+                        "            <span id='grade" + judges.id + "'>" + judgesScore + "</span><br>\n" +
+                        "        </div>";
+                    $("#judges").after(judgesHtml);
+                }
+
+            } else if("score" == parsedJson.cmd){
+
+                $("#grade" + parsedJson.judgesId).text(parsedJson.score);
+
+            }
 
         };
         ws.onclose = function (event) {
             console.log("Connection closed!");
         };
-        ws.onopen = function (event){
+        ws.onopen = function (event) {
             ws_status = true;
             console.log("Connected!");
         };
-        ws.onerror = function (event){
+        ws.onerror = function (event) {
             console.log("Connect error!");
         };
     }
+
     //如果连接失败，每隔两秒尝试重新连接
-    setInterval(function(){
-        if(!ws_status){
+    setInterval(function () {
+        if (!ws_status) {
             openWebSocket();
         }
     }, 2000);
-    $("#send").click(function(){
+    $("#send").click(function () {
         ws.send("Hello, server, I am browser.");
     });
 </script>

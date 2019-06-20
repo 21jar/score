@@ -4,6 +4,7 @@ $(function () {
         datatype: "json",
         colModel: [			
 			{ label: '名称', name: 'name', index: 'name', width: 80 },
+			{ label: '机构id', name: 'deptId', index: 'dept_id', width: 80 },
 			{ label: '机构名称', name: 'deptName', index: 'dept_name', width: 80 },
 			{ label: '总得分', name: 'score', index: 'score', width: 80 }
 		],
@@ -107,6 +108,7 @@ var vm = new Vue({
 		},
 		getInfo: function(id){
 			$.get(baseURL + "program/info/"+id, function(r){
+                $("#score").nextAll().remove();
                 vm.program = r.program;
                 vm.judgesList = r.judgesList;
 				// 动态生成评委
@@ -115,7 +117,7 @@ var vm = new Vue({
 					var htmlStr="<div class=\"form-group\">\n" +
 						"    <div class=\"col-sm-2 control-label\">" + judges.name + "</div>\n" +
 						"    <div class=\"col-sm-10\">\n" +
-						"        <input type=\"text\" class=\"form-control\" v-model=\"program.grade1\" onblur='grade("+judges.id+")'/>\n" +
+						"        <input id='judges" + judges.id + "' value='"+judges.judgesScore+"' type=\"text\" class=\"form-control\" v-model=\"program.grade1\" onblur='grade("+judges.id+")'/>\n" +
 						"    </div>\n" +
 						"</div>"
 					$("#score").after(htmlStr);
@@ -154,6 +156,8 @@ var vm = new Vue({
 
 function grade(id) {
 	var url = "program/grade";
+	vm.program.judgesId=id;
+	vm.program.judgesScore = $("#judges" + id).val();
 	$.ajax({
 		type: "POST",
 		url: baseURL + url,

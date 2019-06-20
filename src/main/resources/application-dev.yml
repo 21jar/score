@@ -5,7 +5,7 @@ spring:
       driver-class-name: com.mysql.jdbc.Driver
       url: jdbc:mysql://a.com:3306/websocket?characterEncoding=UTF-8
       username: root
-      password: 123qweasd
+      password: 2ws3ed@#
 
 #      driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
 #      url: jdbc:sqlserver://127.0.0.1:1433;Databasename=admin

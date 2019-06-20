@@ -15,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -24,4 +25,8 @@ public class JudgesServiceImpl extends ServiceImpl<JudgesDao, Judges> implements
     @Autowired
     private JudgesDao judgesDao;
 
+    @Override
+    public List<Judges> findList(Long programId) {
+        return judgesDao.findList(programId);
+    }
 }

@@ -37,9 +37,9 @@ public class Program implements Serializable {
 	private String deptName;
 
 	@TableField(exist=false)
-	private String judgesId;
+	private Long judgesId;
 
 	@TableField(exist=false)
-	private String judgesScore;
+	private Integer judgesScore;
 
 }

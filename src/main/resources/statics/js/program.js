@@ -126,7 +126,7 @@ var vm = new Vue({
 		},
 		finalScore: function(){
 			$.get(baseURL + "program/finalScore/"+vm.program.id, function(r){
-                $("#finalScore").value(r.program.score);
+                $("#finalScore").val(r.program.score);
 			});
 		},
 		reload: function (event) {

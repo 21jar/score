@@ -13,9 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequestMapping("program")
@@ -93,6 +92,34 @@ public class ProgramController {
         map.put("judgesId",program.getJudgesId());
         WebSocketServer.sendInfo(JSONObject.toJSONString(map));
         return Result.ok();
+    }
+
+    /**
+     * 总得分
+     */
+    @RequestMapping("/finalScore/{id}")
+    public Result finalScore(@PathVariable("id") Long id){
+        Program program = iProgramService.getById(id);
+        List<Judges> judgesList = iJudgesService.findList(id);
+
+        List<Integer> scores=judgesList.stream().map(Judges::getJudgesScore).collect(Collectors.toList());
+//        list.sort(Comparator.comparing(Judges::getJudgesScore).reversed());
+        Collections.sort(scores);
+        scores.remove(scores.size()-1);
+        scores.remove(0);
+        Integer sum = scores.stream().reduce(Integer::sum).orElse(0);
+        float finalScore= (float)sum/scores.size();
+
+        Map map = new HashMap(16);
+        map.put("cmd","finalScore");
+        map.put("finalScore",finalScore);
+        // 推送总得分到大屏
+        WebSocketServer.sendInfo(JSONObject.toJSONString(map));
+
+        program.setScore(finalScore);
+        iProgramService.updateById(program);
+
+        return Result.ok().put("program", program);
     }
 
 }

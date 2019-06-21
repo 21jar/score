@@ -124,6 +124,11 @@ var vm = new Vue({
 				}
 			});
 		},
+		finalScore: function(){
+			$.get(baseURL + "program/finalScore/"+vm.program.id, function(r){
+                $("#finalScore").value(r.program.score);
+			});
+		},
 		reload: function (event) {
 			vm.showList = true;
 			var page = $("#jqGrid").jqGrid('getGridParam','page');

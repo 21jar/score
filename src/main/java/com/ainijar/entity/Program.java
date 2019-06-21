@@ -31,7 +31,7 @@ public class Program implements Serializable {
 	 */
 	private Long deptId;
 
-	private BigDecimal score;
+	private Float score;
 
 	@TableField(exist=false)
 	private String deptName;

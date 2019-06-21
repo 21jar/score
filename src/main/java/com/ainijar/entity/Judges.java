@@ -28,6 +28,6 @@ public class Judges implements Serializable {
 	private Integer orderNum;
 
 	@TableField(exist=false)
-	private String judgesScore;
+	private Integer judgesScore;
 
 }

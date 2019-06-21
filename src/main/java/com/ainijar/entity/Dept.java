@@ -24,6 +24,6 @@ public class Dept implements Serializable {
 	@NotBlank(message="名称不能为空")
 	private String name;
 
-	private BigDecimal score;
+	private Double score;
 
 }

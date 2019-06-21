@@ -127,7 +127,17 @@ var vm = new Vue({
 		},
 		finalScore: function(){
 			$.get(baseURL + "program/finalScore/"+vm.program.id, function(r){
-                $("#finalScore").val(r.program.score);
+				$("#finalScore").val(r.program.score);
+			});
+		},
+		rank: function(){
+			$.get(baseURL + "program/rank/", function(r){
+				if(r.code == 0){
+					alert('操作成功', function(index){
+					});
+				}else{
+					alert(r.msg);
+				}
 			});
 		},
 		reload: function (event) {

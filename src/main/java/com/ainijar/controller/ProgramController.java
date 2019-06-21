@@ -108,7 +108,7 @@ public class ProgramController {
         scores.remove(scores.size()-1);
         scores.remove(0);
         Integer sum = scores.stream().reduce(Integer::sum).orElse(0);
-        float finalScore= (float)sum/scores.size();
+        double finalScore= (double)sum/scores.size();
 
         Map map = new HashMap(16);
         map.put("cmd","finalScore");
@@ -120,6 +120,28 @@ public class ProgramController {
         iProgramService.updateById(program);
 
         return Result.ok().put("program", program);
+    }
+    /**
+     * 总得分
+     */
+    @RequestMapping("/rank/")
+    public Result rank(){
+        // 根据机构查询节目，相加后更新
+        List<Dept> depts = iDeptService.list();
+        for (Dept dept : depts) {
+            List<Program> programs = iProgramService.list(new QueryWrapper<Program>().eq("dept_id",dept.getId()));
+            double sum = programs.stream().mapToDouble(Program::getScore).sum();
+            dept.setScore(sum);
+            iDeptService.updateById(dept);
+        }
+        // 排序后推送到大屏
+        depts.sort(Comparator.comparing(Dept::getScore).reversed());
+        Map map = new HashMap(16);
+        map.put("cmd","rank");
+        map.put("depts",depts);
+        // 推送总得分到大屏
+        WebSocketServer.sendInfo(JSONObject.toJSONString(map));
+        return Result.ok();
     }
 
 }

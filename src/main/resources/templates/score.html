@@ -16,13 +16,25 @@
             float: left;
             text-align: center;
         }
+
         .programScore {
             margin-top: 5%;
             text-align: center;
         }
+
         .programName {
             margin-top: 3%;
         }
+
+        .rankDiv {
+            text-align: center;
+            margin-top: 10%;
+        }
+
+        .renk {
+            margin-top: 2%;
+        }
+
         span {
             color: white;
             font-size: 30px;
@@ -32,20 +44,19 @@
 </head>
 <body>
 <img src="/statics/images/beijing.jpg" width="100%" height="100%" style="z-index:-100;position:absolute;left:0;top:0">
-<div>
-    <div class="programName">
-        <span id="programName"></span><br>
+    <div id="scoreDiv">
+        <div class="programName">
+            <span id="programName"></span><br>
+        </div>
+        <div class="programScore">
+            <span>总得分: &nbsp;&nbsp;</span><span id="finalScore"></span>
+        </div>
+        <div class="middle">
+            <div id="judges"></div>
+        </div>
     </div>
-    <div class="programScore">
-        <span>总得分: &nbsp;&nbsp;</span><span id="finalScore"></span>
+    <div id="rankDiv" class="rankDiv">
     </div>
-
-
-    <div class="middle">
-        <div id="judges"></div>
-    </div>
-
-</div>
 </body>
 
 <script type="text/javascript">
@@ -72,12 +83,14 @@
             var parsedJson = jQuery.parseJSON(event.data);
             // 根据指令处理任务
             if ("init" == parsedJson.cmd) {
+                $("#rankDiv").hide();
+                $("#scoreDiv").show();
                 $("#programName").text(parsedJson.program.name);
-                $("#finalScore").text("undefined" == typeof(parsedJson.program.score) ? "": parsedJson.program.score);
+                $("#finalScore").text("undefined" == typeof (parsedJson.program.score) ? "" : parsedJson.program.score);
                 $("#judges").nextAll().remove();
                 for (var i = 0; i < parsedJson.judgesList.length; i++) {
                     var judges = parsedJson.judgesList[i];
-                    var judgesScore = "undefined" == typeof(judges.judgesScore) ? "": judges.judgesScore;
+                    var judgesScore = "undefined" == typeof (judges.judgesScore) ? "" : judges.judgesScore;
                     var judgesHtml = "<div class=\"judges\">\n" +
                         "            <img id='judgesImg" + judges.id + "' width=\"90%\" height=\"90%\" src=\"/statics/images/" + judges.name + ".jpg\"><br>\n" +
                         "            <span id='judgesName" + judges.id + "'>" + judges.name + "</span><br>\n" +
@@ -86,12 +99,24 @@
                     $("#judges").after(judgesHtml);
                 }
 
-            } else if("score" == parsedJson.cmd){
+            } else if ("score" == parsedJson.cmd) {
                 $("#grade" + parsedJson.judgesId).text(parsedJson.score);
-            } else if("finalScore" == parsedJson.cmd){
+            } else if ("finalScore" == parsedJson.cmd) {
                 $("#finalScore").text(parsedJson.finalScore);
+            } else if ("rank" == parsedJson.cmd) {
+                $("#scoreDiv").hide();
+                $("#rankDiv").show();
+                $("#rankDiv").html("");
+                for (var i = 0; i < parsedJson.depts.length; i++) {
+                    var dept = parsedJson.depts[i];
+                    var renkHtml = "<div class=\"renk\">\n" +
+                        "            <span>" + dept.name + "</span>\n &nbsp;&nbsp;&nbsp;&nbsp;" +
+                        "            <span>" + dept.score + "</span><br>\n" +
+                        "        </div>";
+                    // $("#rankDiv").appendChild(renkHtml);
+                    $(renkHtml).appendTo($("#rankDiv"));
+                }
             }
-
         };
         ws.onclose = function (event) {
             console.log("Connection closed!");

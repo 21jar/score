@@ -114,10 +114,11 @@ var vm = new Vue({
 				// 动态生成评委
 				for(var i=0; i<vm.judgesList.length; i++) {
 					var judges = vm.judgesList[i];
+					var judgesScore = judges.judgesScore == null ? "" : judges.judgesScore;
 					var htmlStr="<div class=\"form-group\">\n" +
 						"    <div class=\"col-sm-2 control-label\">" + judges.name + "</div>\n" +
 						"    <div class=\"col-sm-10\">\n" +
-						"        <input id='judges" + judges.id + "' value='"+judges.judgesScore+"' type=\"text\" class=\"form-control\" v-model=\"program.grade1\" onblur='grade("+judges.id+")'/>\n" +
+						"        <input id='judges" + judges.id + "' value='"+ judgesScore +"' type=\"text\" class=\"form-control\" v-model=\"program.grade1\" onblur='grade("+judges.id+")'/>\n" +
 						"    </div>\n" +
 						"</div>"
 					$("#score").after(htmlStr);
